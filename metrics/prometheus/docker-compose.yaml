@@ -15,6 +15,7 @@ services:
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-remote-write-receiver'
       - '--web.enable-lifecycle'
     restart: unless-stopped
     ports:
@@ -33,6 +34,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=adatech@2233
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_METRICS_ENABLED=true
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
     restart: unless-stopped
     ports:
       - 3010:3000
@@ -90,6 +92,38 @@ services:
     networks:
       - monitoring
 
+  blackbox:
+    image: prom/blackbox-exporter
+    container_name: blackbox
+    privileged: true
+    command:
+      - --config.file=/etc/blackbox/blackbox.yml
+    volumes:
+      - ./config/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml
+    ports:
+      - 9115:9115      
+    networks:
+      - monitoring
+
+  redis-exporter:
+    image: oliver006/redis_exporter
+    container_name: redis-exporter
+    command: -redis.addr redis://redis:6379
+    ports:
+      - 9121:9121
+    networks:
+      - monitoring
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgres:postgres@database:5432/votes?sslmode=disable
+    networks:
+      - monitoring
+      
   ## Stack Serviços App Voting
   frontend:
     container_name: frontend
@@ -160,14 +194,15 @@ services:
     networks:
       - monitoring      
 
-  #seed: 
-  #  container_name: seed
-  #  hostname: seed
-  #  image: devinfrabr/seed:latest
-  #  links:
-  #    - backend
-  #  networks:
-  #    - monitoring 
+  seed: 
+    container_name: seed
+    hostname: seed
+    restart: always
+    image: devinfrabr/seed:latest
+    links:
+      - backend
+    networks:
+      - monitoring 
 
 volumes:
     prometheus_data: {}

@@ -1,7 +1,6 @@
 global:
   scrape_interval:     15s
   evaluation_interval: 15s
-
   external_labels:
       monitor: 'ada-tech-monitoring'
 
@@ -26,12 +25,60 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:8080']
 
+  - job_name: 'alertmanager'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['alertmanager:9093']
+
+
   - job_name: 'prometheus'
     scrape_interval: 10s
     static_configs:
       - targets: ['localhost:9090']
 
   - job_name: 'grafana'
-    scrape_interval: 10s
+    scrape_interval: 5s
     static_configs:
       - targets: ['grafana:3000']
+
+  - job_name: 'worker'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['worker:3000']
+
+  - job_name: 'backend'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['backend']
+
+  - job_name: 'redis-exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  - job_name: 'postgres-exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  - job_name: blackbox
+    metrics_path: /probe
+    scrape_interval: 5s
+    params:
+      module: [http_2xx]
+    static_configs:
+    - targets:
+      - prometheus:9090
+      - grafana:3000 
+      - alertmanager:9093
+      - worker:3000
+      - backend
+      - frontend:3000
+      - google.com
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: blackbox:9115      
