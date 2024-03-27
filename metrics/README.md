@@ -44,3 +44,11 @@ $ k6 run ./script.js
 ```bash
 k6 run script.js
 ```
+
+## Generate Logs
+
+```ssh
+docker run -ti mingrammer/flog flog -s 60s -n 1500 -f json >> <folder>/example.log
+```
+
+

@@ -202,8 +202,20 @@ services:
     links:
       - backend
     networks:
-      - monitoring 
+      - monitoring
 
+  ## Log Collector
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.12.2
+    container_name: filebear
+    user: root
+    volumes:
+      - ./config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./logs/:/var/log/
+    command: filebeat -e -strict.perms=true
+    networks:
+      - monitoring
+      
 volumes:
     prometheus_data: {}
     grafana_data: {}      
