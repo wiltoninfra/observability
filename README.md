@@ -495,3 +495,53 @@ A exposição de logs é uma prática importante em desenvolvimento de software 
 
 ## Simples diagrama ELK
 ![Drawn](./docs/img/logs.png)
+
+
+**Subindo ambiente de estudos prometheus**
+
+Faça um clone do repositório:
+
+```bash
+git clone https://github.com/wiltoninfra/observability
+```
+
+Entre na pasta do projeto:
+
+```bash
+cd metric/prometheus
+```
+
+Execute o comando abaixo para subir o ambiente:
+
+```bash
+docker-compose up -d
+```
+
+Verifique se todos os serviços estão em execução:
+
+```bash
+docker-compose ps
+```
+
+Acesse no browser usando `http://localhost:<porta de acesso>`
+
+Para visualizar as métricas que cada serviço esta expondo acesse: `http://localhost:<porta de acesso>/metrics`
+
+## Mapeamento
+
+| Serviço               | Porta de Acesso | Descrição                                                                               |
+|-----------------------|-----------------|-----------------------------------------------------------------------------------------|
+| Prometheus            | 9090            | Interface do Prometheus para visualização de métricas e configuração.                    |
+| Grafana               | 3010            | Interface do Grafana para visualização de dashboards e métricas.                        |
+| Alertmanager          | 9093            | Interface do Alertmanager para gerenciamento de alertas.                                 |
+| Node Exporter         | 9100            | Métricas do sistema operacional e hardware do host.                                      |
+| cAdvisor              | 8080            | Métricas do uso de recursos de contêineres Docker.                                       |
+| Blackbox Exporter     | 9115            | Exportador para realizar verificações de endpoints HTTP, HTTPS, TCP, ICMP e DNS.         |
+| Redis Exporter        | 9121            | Exportador de métricas do Redis.                                                         |
+| PostgreSQL Exporter   | 9187            | Exportador de métricas do PostgreSQL.                                                     |
+| Frontend (Node.js)    | 3000            | Aplicação Frontend em Node.js.                                                            |
+| Backend (Node.js)     | 8080            | Aplicação Backend em Python.                                                             |
+| Worker (Node.js)      | 3001            | Aplicação Worker em Node.js.                                                              |
+
+## Laboratório
+Acesse os desafios propostos no [laboratório](./docs/lab01.md) e pratique seus conhecimentos.
